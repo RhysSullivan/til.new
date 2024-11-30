@@ -22,10 +22,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* load in dev */}
+        {process.env.NODE_ENV === "development" && (
+          <script
+            src="https://unpkg.com/react-scan/dist/auto.global.js"
+            async
+          />
+        )}
+      </head>
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
-          fontSans.variable,
+          fontSans.variable
         )}
       >
         <ThemeProvider

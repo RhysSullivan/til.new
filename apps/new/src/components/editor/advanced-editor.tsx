@@ -25,8 +25,8 @@ import { Separator } from "../ui/separator";
 const extensions = [...defaultExtensions, slashCommand];
 
 interface EditorProp {
-  initialValue?: JSONContent;
-  onChange: (value: JSONContent) => void;
+  initialValue?: string;
+  onChange: (value: string) => void;
 }
 const Editor = ({ initialValue, onChange }: EditorProp) => {
   const [openNode, setOpenNode] = useState(false);
@@ -36,8 +36,7 @@ const Editor = ({ initialValue, onChange }: EditorProp) => {
   return (
     <EditorRoot>
       <EditorContent
-        className="border p-4 rounded-xl"
-        {...(initialValue && { initialContent: initialValue })}
+        className=" p-4 rounded-xl"
         extensions={extensions}
         editorProps={{
           handleDOMEvents: {
@@ -51,7 +50,7 @@ const Editor = ({ initialValue, onChange }: EditorProp) => {
           },
         }}
         onUpdate={({ editor }) => {
-          onChange(editor.getJSON());
+          onChange(editor.storage.markdown.getMarkdown());
         }}
         slotAfter={<ImageResizer />}
       >
@@ -94,8 +93,6 @@ const Editor = ({ initialValue, onChange }: EditorProp) => {
           <LinkSelector open={openLink} onOpenChange={setOpenLink} />
           <Separator orientation="vertical" />
           <TextButtons />
-          <Separator orientation="vertical" />
-          <ColorSelector open={openColor} onOpenChange={setOpenColor} />
         </EditorBubble>
       </EditorContent>
     </EditorRoot>

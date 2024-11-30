@@ -1,21 +1,18 @@
 "use client";
 import Editor from "@/components/editor/advanced-editor";
-import { ThemeToggle } from "@/components/theme-toggle";
-import { JSONContent } from "novel";
 import { useState } from "react";
-import { defaultValue } from "./default-value";
+import { Button } from "@/components/ui/button";
+import { save } from "./actions";
 
 export default function Home() {
-  const [value, setValue] = useState<JSONContent>(defaultValue);
-  console.log(value);
+  const [value, setValue] = useState<string | undefined>(undefined);
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="flex flex-col p-6 border max-w-xl w-full gap-6 rounded-md bg-card">
-        <div className="flex justify-between">
-          <h1 className="text-4xl font-semibold"> Novel Example</h1>
-          <ThemeToggle />
-        </div>
         <Editor initialValue={value} onChange={setValue} />
+        <Button variant="outline" onClick={() => value && save(value)}>
+          Save
+        </Button>
       </div>
     </main>
   );
