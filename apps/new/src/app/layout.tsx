@@ -26,12 +26,12 @@ export default function RootLayout({
     <html lang="en">
       <head>
         {/* load in dev */}
-        {process.env.NODE_ENV === "development" && (
+        {/* {process.env.NODE_ENV === "development" && (
           <script
             src="https://unpkg.com/react-scan/dist/auto.global.js"
             async
           />
-        )}
+        )} */}
       </head>
       <body
         className={cn(

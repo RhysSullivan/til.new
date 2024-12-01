@@ -10,7 +10,11 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="flex flex-col p-6 border max-w-xl w-full gap-6 rounded-md bg-card">
         <Editor initialValue={value} onChange={setValue} />
-        <Button variant="outline" onClick={() => value && save(value)}>
+        <Button
+          disabled={!value}
+          variant="outline"
+          onClick={() => value && save(value)}
+        >
           Save
         </Button>
       </div>
