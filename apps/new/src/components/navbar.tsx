@@ -1,5 +1,5 @@
 "use client";
-import { signOut, useSession } from "@/lib/auth-client";
+import { signIn, signOut, useSession } from "@/lib/auth-client";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import {
@@ -41,7 +41,17 @@ export function Navbar() {
           </DropdownMenuContent>
         </DropdownMenu>
       ) : (
-        <Link href="/sign-in">Sign In</Link>
+        <Button
+          variant="outline"
+          onClick={() =>
+            signIn.social({
+              provider: "github",
+              callbackURL: "/",
+            })
+          }
+        >
+          Sign In
+        </Button>
       )}
     </nav>
   );
