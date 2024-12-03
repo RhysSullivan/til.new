@@ -29,30 +29,31 @@ export class GitHubCMS {
 	async createCommit(
 		owner: string,
 		repo: string,
-		filePath: string,
+		title: string,
 		content: string,
 		message: string,
 	) {
-		try {
-			const existingFile = await this.octokit.rest.repos.getContent({
+		const existingFile = await this.octokit.rest.repos
+			.getContent({
 				owner,
 				repo,
-				path: filePath,
+				path: `content/${title}`,
 				ref: 'main',
-			});
-			await this.octokit.repos.createOrUpdateFileContents({
-				owner,
-				repo,
-				path: filePath,
-				message,
-				branch: 'main',
-				content: Buffer.from(content).toString('base64'),
-				// @ts-expect-error
-				sha: existingFile.data.sha,
-			});
-		} catch (error) {
-			console.error('Error creating commit:', error);
-			throw error;
+			})
+			.catch(() => null);
+		// if the file doesn't exist, add the date to the file name, i.e. hello-world-2024-01-01.md
+		if (!existingFile) {
+			title = `${new Date().toISOString().split('T')[0]}-${title}.md`;
 		}
+		await this.octokit.repos.createOrUpdateFileContents({
+			owner,
+			repo,
+			path: `content/${title}`,
+			message,
+			branch: 'main',
+			content: Buffer.from(content).toString('base64'),
+			// @ts-expect-error
+			sha: existingFile?.data.sha,
+		});
 	}
 }

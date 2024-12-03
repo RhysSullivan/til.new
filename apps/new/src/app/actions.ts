@@ -1,10 +1,11 @@
 'use server';
 
+import { sanitizeFileName } from '@/lib/utils';
 import { auth, db, ProviderAccount } from '@/server/auth';
 import { GitHubCMS } from '@/server/github';
 import { headers } from 'next/headers';
 
-export async function save(value: string) {
+export async function save(input: { title: string; value: string }) {
 	const accounts = await auth.api.listUserAccounts({
 		headers: await headers(),
 	});
@@ -18,13 +19,16 @@ export async function save(value: string) {
 	if (!account) {
 		throw new Error('Account not found');
 	}
-	const cms = await GitHubCMS.initialize('');
-	console.log(value);
+	const fileName = sanitizeFileName(input.title, {
+		replacement: '-',
+	});
+	const cms = await GitHubCMS.initialize('57843813');
+	console.log(input.value);
 	const repo = await cms.createCommit(
 		'rhyssullivan',
 		'til',
-		'content/hello-world.md',
-		value,
+		fileName,
+		input.value,
 		'Edit: hello-world.md via til.new',
 	);
 }
