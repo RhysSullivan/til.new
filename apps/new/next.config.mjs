@@ -1,7 +1,9 @@
 import SmeeClient from "smee-client";
 
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+  experimental: {},
+};
 
 export default nextConfig;
 
