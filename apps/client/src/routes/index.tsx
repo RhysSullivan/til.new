@@ -149,7 +149,14 @@ function HomeComponent() {
   return (
     <div className="p-2">
       {isLoading && <div>Loading...</div>}
-      {data && <FileTree files={data} />}
+      {data && (
+        <FileTree
+          files={data}
+          onFileSelect={(file) => {
+            console.log(`selected ${file.path}`);
+          }}
+        />
+      )}
     </div>
   );
 }

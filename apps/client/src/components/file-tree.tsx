@@ -1,17 +1,19 @@
 import React from "react";
 import { FolderIcon, FileIcon, ChevronRight } from "lucide-react";
 
-interface TreeNode {
+type TreeNode<T extends "file" | "folder" = "file" | "folder"> = {
   name: string;
-  type: "file" | "folder";
-  children?: TreeNode[];
-}
+  type: T;
+  path: string;
+  children?: T extends "file" ? never : TreeNode<T>[];
+};
 
 interface FileTreeProps {
   files: string[];
+  onFileSelect?: (filePath: TreeNode<"file">) => void;
 }
 
-export const FileTree = ({ files }: FileTreeProps) => {
+export const FileTree = ({ files, onFileSelect }: FileTreeProps) => {
   // Convert flat file list to tree structure
   const buildTree = (paths: string[]): TreeNode[] => {
     const root: TreeNode[] = [];
@@ -19,8 +21,10 @@ export const FileTree = ({ files }: FileTreeProps) => {
     paths.forEach((path) => {
       const parts = path.split("/");
       let currentLevel = root;
+      let currentPath = "";
 
       parts.forEach((part, index) => {
+        currentPath = currentPath ? `${currentPath}/${part}` : part;
         const isLastPart = index === parts.length - 1;
         const existingNode = currentLevel.find((node) => node.name === part);
 
@@ -31,6 +35,7 @@ export const FileTree = ({ files }: FileTreeProps) => {
         } else {
           const newNode: TreeNode = {
             name: part,
+            path: currentPath,
             type: isLastPart ? "file" : "folder",
             ...(isLastPart ? {} : { children: [] }),
           };
@@ -59,7 +64,13 @@ export const FileTree = ({ files }: FileTreeProps) => {
         <div
           className={`flex items-center gap-2 px-2 py-1 hover:bg-gray-100 rounded cursor-pointer`}
           style={{ paddingLeft: `${depth * 16}px` }}
-          onClick={() => node.type === "folder" && setIsOpen(!isOpen)}
+          onClick={() => {
+            if (node.type === "folder") {
+              setIsOpen(!isOpen);
+            } else if (onFileSelect) {
+              onFileSelect(node as TreeNode<"file">);
+            }
+          }}
         >
           <div className="flex items-center gap-2">
             {node.type === "folder" ? (
