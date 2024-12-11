@@ -19,6 +19,9 @@ window.Buffer = Buffer;
 window.fs = new LightningFS("fs");
 window.pfs = window.fs.promises;
 
+const REPO_DIR = "/calcom";
+const repoUrl = "https://github.com/calcom/cal.com";
+
 export const Route = createFileRoute("/")({
   component: HomeComponent,
 });
@@ -35,9 +38,8 @@ async function checkRepoExists(fs: LightningFS, dir: string): Promise<boolean> {
 async function getDefaultBranch(fs: LightningFS, dir: string): Promise<string> {
   try {
     const refs = await git.listServerRefs({
-      fs,
       http,
-      url: "https://github.com/AnswerOverflow/AnswerOverflow",
+      url: repoUrl,
       corsProxy: "https://cors.isomorphic-git.org",
       prefix: "refs/heads/",
     });
@@ -64,20 +66,19 @@ async function getDefaultBranch(fs: LightningFS, dir: string): Promise<string> {
 }
 
 async function cloneIfStale(repoUrl: string): Promise<void> {
-  const localPath = "/repo-answer";
   const fs = window.fs;
 
   try {
-    const repoExists = await checkRepoExists(fs, localPath);
+    const repoExists = await checkRepoExists(fs, REPO_DIR);
 
     if (repoExists) {
       try {
-        const defaultBranch = await getDefaultBranch(fs, localPath);
+        const defaultBranch = await getDefaultBranch(fs, REPO_DIR);
         const [local, remote] = await Promise.all([
-          git.resolveRef({ fs, dir: localPath, ref: defaultBranch }),
+          git.resolveRef({ fs, dir: REPO_DIR, ref: defaultBranch }),
           git.resolveRef({
             fs,
-            dir: localPath,
+            dir: REPO_DIR,
             ref: `origin/${defaultBranch}`,
           }),
         ]);
@@ -88,26 +89,28 @@ async function cloneIfStale(repoUrl: string): Promise<void> {
         }
       } catch (e) {
         console.log("Error checking refs, will re-clone:", e);
-        await fs.promises.rmdir(localPath, { recursive: true });
+        // @ts-expect-error
+        await fs.promises.rmdir(REPO_DIR, { recursive: true });
       }
     }
 
     // Ensure the directory is empty before cloning
     try {
-      await fs.promises.rmdir(localPath, { recursive: true });
+      // @ts-expect-error
+      await fs.promises.rmdir(REPO_DIR, { recursive: true });
     } catch (e) {
       // Directory might not exist, that's okay
     }
 
     // Get the default branch before cloning
-    const defaultBranch = await getDefaultBranch(fs, localPath);
+    const defaultBranch = await getDefaultBranch(fs, REPO_DIR);
     console.log(`Using default branch: ${defaultBranch}`);
 
     // Clone the repository
     await git.clone({
       fs,
       http,
-      dir: localPath,
+      dir: REPO_DIR,
       url: repoUrl,
       singleBranch: true,
       depth: 1,
@@ -125,13 +128,12 @@ function HomeComponent() {
   const { data, isLoading, error } = useQuery({
     queryKey: ["files"],
     queryFn: async () => {
-      const repoUrl = "https://github.com/AnswerOverflow/AnswerOverflow";
       await cloneIfStale(repoUrl);
 
-      const defaultBranch = await getDefaultBranch(window.fs, "/repo-answer");
+      const defaultBranch = await getDefaultBranch(window.fs, REPO_DIR);
       const files = await git.listFiles({
         fs: window.fs,
-        dir: "/repo-answer",
+        dir: REPO_DIR,
         ref: defaultBranch,
       });
 

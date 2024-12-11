@@ -52,7 +52,7 @@ export const FileTree = ({ files }: FileTreeProps) => {
     node: TreeNode;
     depth?: number;
   }) => {
-    const [isOpen, setIsOpen] = React.useState(true);
+    const [isOpen, setIsOpen] = React.useState(false);
 
     return (
       <div className="select-none">
@@ -85,11 +85,13 @@ export const FileTree = ({ files }: FileTreeProps) => {
   const treeData = buildTree(files);
 
   return (
-    <div className="w-64 bg-white border-r max-w-[400px] overflow-x-auto h-full p-2">
+    <div className="flex flex-col h-full">
       <div className="font-medium text-sm mb-2 px-2">Files</div>
-      {treeData.map((node, index) => (
-        <TreeItem key={index} node={node} />
-      ))}
+      <div className="w-64 bg-white border-r max-w-[400px] overflow-x-auto max-h-[calc(100vh-100px)] px-2">
+        {treeData.map((node, index) => (
+          <TreeItem key={index} node={node} />
+        ))}
+      </div>
     </div>
   );
 };
