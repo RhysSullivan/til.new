@@ -7,7 +7,11 @@ interface TreeNode {
   children?: TreeNode[];
 }
 
-const FileTree = () => {
+interface FileTreeProps {
+  files: string[];
+}
+
+export const FileTree = ({ files }: FileTreeProps) => {
   // Convert flat file list to tree structure
   const buildTree = (paths: string[]): TreeNode[] => {
     const root: TreeNode[] = [];
@@ -41,13 +45,6 @@ const FileTree = () => {
     return root;
   };
 
-  const files = [
-    "README.md",
-    "Send analytics data using the Beacon API",
-    "content/hello-world.md",
-    "content/send-analytics-data-using-the-beacon-api-2024-12-02.md",
-  ];
-
   const TreeItem = ({
     node,
     depth = 0,
@@ -65,13 +62,10 @@ const FileTree = () => {
           onClick={() => node.type === "folder" && setIsOpen(!isOpen)}
         >
           <div className="flex items-center gap-2">
-            {node.type === "folder" && (
+            {node.type === "folder" ? (
               <ChevronRight
                 className={`h-4 w-4 transition-transform ${isOpen ? "rotate-90" : ""}`}
               />
-            )}
-            {node.type === "folder" ? (
-              <FolderIcon className="h-4 w-4 text-blue-500" />
             ) : (
               <FileIcon className="h-4 w-4 text-gray-500" />
             )}
@@ -91,7 +85,7 @@ const FileTree = () => {
   const treeData = buildTree(files);
 
   return (
-    <div className="w-64 bg-white border-r h-full p-2">
+    <div className="w-64 bg-white border-r max-w-[400px] overflow-x-auto h-full p-2">
       <div className="font-medium text-sm mb-2 px-2">Files</div>
       {treeData.map((node, index) => (
         <TreeItem key={index} node={node} />
@@ -99,5 +93,3 @@ const FileTree = () => {
     </div>
   );
 };
-
-export default FileTree;
