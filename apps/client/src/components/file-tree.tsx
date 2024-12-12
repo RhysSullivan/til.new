@@ -10,14 +10,29 @@ type TreeNode<T extends "file" | "folder" = "file" | "folder"> = {
 
 interface FileTreeProps {
   files: string[];
+  filters?: string[];
 }
 
-export const FileTree = ({ files }: FileTreeProps) => {
+export const FileTree = ({ files, filters }: FileTreeProps) => {
   // Convert flat file list to tree structure
   const buildTree = (paths: string[]): TreeNode[] => {
     const root: TreeNode[] = [];
 
-    paths.forEach((path) => {
+    // Filter paths if filters are provided
+    const filteredPaths = filters
+      ? paths.filter(
+          (path) =>
+            filters.some((filter) => path.endsWith(filter)) ||
+            // Include paths that have children matching the filter
+            paths.some(
+              (otherPath) =>
+                otherPath.startsWith(path + "/") &&
+                filters.some((filter) => otherPath.endsWith(filter))
+            )
+        )
+      : paths;
+
+    filteredPaths.forEach((path) => {
       const parts = path.split("/");
       let currentLevel = root;
       let currentPath = "";
@@ -46,7 +61,20 @@ export const FileTree = ({ files }: FileTreeProps) => {
       });
     });
 
-    return root;
+    // Remove empty folders
+    const removeEmptyFolders = (
+      nodes: TreeNode<"folder">[]
+    ): TreeNode<"folder">[] => {
+      return nodes.filter((node) => {
+        if (node.type === "folder" && node.children) {
+          node.children = removeEmptyFolders(node.children!);
+          return node.children.length > 0;
+        }
+        return true;
+      });
+    };
+
+    return removeEmptyFolders(root as TreeNode<"folder">[]);
   };
 
   const TreeItem = ({
@@ -99,9 +127,9 @@ export const FileTree = ({ files }: FileTreeProps) => {
   const treeData = buildTree(files);
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full w-64 ">
       <div className="font-medium text-sm mb-2 px-2">Files</div>
-      <div className="w-64 bg-white border-r max-w-[400px] overflow-x-auto max-h-[calc(100vh-100px)] px-2">
+      <div className="w-64 bg-white border-r max-w-64 overflow-x-auto max-h-[calc(100vh-100px)] px-2">
         {treeData.map((node, index) => (
           <TreeItem key={index} node={node} />
         ))}

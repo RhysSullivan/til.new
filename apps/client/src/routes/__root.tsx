@@ -73,9 +73,9 @@ function Sidebar() {
   }
 
   return (
-    <div className="p-2">
+    <div className="p-2 w-64">
       {isLoading && <div>Loading...</div>}
-      {data && <FileTree files={data} />}
+      {data && <FileTree filters={[".md", ".mdx"]} files={data} />}
     </div>
   );
 }
