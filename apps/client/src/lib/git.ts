@@ -3,7 +3,7 @@ import http from 'isomorphic-git/http/web';
 import git from 'isomorphic-git';
 import { Buffer } from 'buffer';
 
-export const REPO_DIR = '/posthog-docs';
+export const REPO_DIR = '/posthog-docs-asdf';
 export const repoUrl = 'https://github.com/PostHog/posthog.com';
 
 declare global {
@@ -148,5 +148,9 @@ export async function getFileContents(path: string) {
 	// Convert the blob to a string
 	// TODO: Handle images etc
 	const content = new TextDecoder().decode(blob);
-	return content;
+
+	// Construct the GitHub URL for the file
+	const url = `${repoUrl}/blob/${defaultBranch}/${path}`;
+
+	return { content, url };
 }
