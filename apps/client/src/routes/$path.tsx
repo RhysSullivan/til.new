@@ -18,7 +18,7 @@ function RouteComponent() {
   const contents = Route.useLoaderData();
 
   return (
-    <div className="flex flex-col mx-auto p-6 w-full rounded-xl max-w-2xl gap-4 max-h-[calc(100vh-100px)] overflow-y-auto ">
+    <div className="flex flex-col mx-auto p-6 w-full rounded-xl w-full gap-4 max-h-[calc(100vh-100px)] overflow-y-auto ">
       <Editor
         key={contents.path}
         initialValue={contents.contents}

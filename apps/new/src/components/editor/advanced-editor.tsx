@@ -36,7 +36,7 @@ const Editor = ({ initialValue, onChange }: EditorProp) => {
   return (
     <EditorRoot>
       <EditorContent
-        className=" p-4 rounded-xl"
+        className="p-4 rounded-xl "
         extensions={extensions}
         editorProps={{
           handleDOMEvents: {
@@ -46,7 +46,7 @@ const Editor = ({ initialValue, onChange }: EditorProp) => {
           handleDrop: (view, event, _slice, moved) =>
             handleImageDrop(view, event, moved, uploadFn),
           attributes: {
-            class: `prose prose-lg dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full`,
+            class: `prose prose-lg max-w-2xl dark:prose-invert prose-headings:font-title font-default focus:outline-none `,
           },
         }}
         onUpdate={({ editor }) => {
