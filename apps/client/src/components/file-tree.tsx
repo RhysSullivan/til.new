@@ -1,6 +1,6 @@
 import React from "react";
 import { FolderIcon, FileIcon, ChevronRight } from "lucide-react";
-
+import { Link } from "@tanstack/react-router";
 type TreeNode<T extends "file" | "folder" = "file" | "folder"> = {
   name: string;
   type: T;
@@ -10,10 +10,9 @@ type TreeNode<T extends "file" | "folder" = "file" | "folder"> = {
 
 interface FileTreeProps {
   files: string[];
-  onFileSelect?: (filePath: TreeNode<"file">) => void;
 }
 
-export const FileTree = ({ files, onFileSelect }: FileTreeProps) => {
+export const FileTree = ({ files }: FileTreeProps) => {
   // Convert flat file list to tree structure
   const buildTree = (paths: string[]): TreeNode[] => {
     const root: TreeNode[] = [];
@@ -61,28 +60,32 @@ export const FileTree = ({ files, onFileSelect }: FileTreeProps) => {
 
     return (
       <div className="select-none">
-        <div
-          className={`flex items-center gap-2 px-2 py-1 hover:bg-gray-100 rounded cursor-pointer`}
-          style={{ paddingLeft: `${depth * 16}px` }}
-          onClick={() => {
-            if (node.type === "folder") {
-              setIsOpen(!isOpen);
-            } else if (onFileSelect) {
-              onFileSelect(node as TreeNode<"file">);
-            }
-          }}
-        >
-          <div className="flex items-center gap-2">
-            {node.type === "folder" ? (
+        {node.type === "folder" ? (
+          <button
+            className={`flex w-full items-center gap-2 px-2 py-1 hover:bg-gray-100 rounded cursor-pointer`}
+            style={{ paddingLeft: `${depth * 16}px` }}
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            <div className="flex items-center gap-2">
               <ChevronRight
                 className={`h-4 w-4 transition-transform ${isOpen ? "rotate-90" : ""}`}
               />
-            ) : (
+              <span className="text-sm truncate">{node.name}</span>
+            </div>
+          </button>
+        ) : (
+          <Link
+            to={`/$path`}
+            params={{ path: node.path }}
+            className={`flex items-center gap-2 px-2 py-1 hover:bg-gray-100 rounded cursor-pointer`}
+            style={{ paddingLeft: `${depth * 16}px` }}
+          >
+            <div className="flex items-center gap-2">
               <FileIcon className="h-4 w-4 text-gray-500" />
-            )}
-            <span className="text-sm truncate">{node.name}</span>
-          </div>
-        </div>
+              <span className="text-sm truncate">{node.name}</span>
+            </div>
+          </Link>
+        )}
 
         {node.type === "folder" &&
           isOpen &&

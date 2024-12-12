@@ -7,6 +7,9 @@ import {
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { QueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
+import { FileTree } from "../components/file-tree";
+import { cloneIfStale, listFiles, repoUrl } from "../lib/git";
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
@@ -45,10 +48,34 @@ function RootComponent() {
         </Link>
       </div>
       <hr />
-      <Outlet />
+      <div className="flex">
+        <Sidebar />
+        <Outlet />
+      </div>
       <ReactQueryDevtools buttonPosition="top-right" />
 
       <TanStackRouterDevtools position="bottom-right" />
     </>
+  );
+}
+
+function Sidebar() {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["files"],
+    queryFn: async () => {
+      await cloneIfStale(repoUrl);
+      return await listFiles();
+    },
+    retry: 1,
+  });
+  if (error) {
+    return <div>Error loading repository: {(error as Error).message}</div>;
+  }
+
+  return (
+    <div className="p-2">
+      {isLoading && <div>Loading...</div>}
+      {data && <FileTree files={data} />}
+    </div>
   );
 }
