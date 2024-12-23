@@ -3,11 +3,16 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vinxi dev",
+    "dev": "npx convex dev --once && concurrently -r npm:dev:web npm:dev:db",
+    "dev:web": "vinxi dev",
+    "dev:db": "convex dev --run board:seed",
     "build": "vinxi build",
     "start": "vinxi start"
   },
   "dependencies": {
+    "@auth/core": "0.37.0",
+    "@convex-dev/auth": "^0.0.77",
+    "@convex-dev/react-query": "^0.0.0-alpha.8",
     "@hookform/resolvers": "^3.9.1",
     "@radix-ui/react-accordion": "^1.2.2",
     "@radix-ui/react-alert-dialog": "^1.1.4",
@@ -52,6 +57,7 @@
     "better-sqlite3": "^11.7.0",
     "class-variance-authority": "^0.7.1",
     "cmdk": "1.0.0",
+    "convex": "^1.17.4",
     "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.5.1",
     "input-otp": "^1.4.1",
@@ -78,6 +84,7 @@
     "@types/react-dom": "^18.2.18",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
+    "concurrently": "^9.1.0",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",
     "vite-tsconfig-paths": "^5.1.4"
