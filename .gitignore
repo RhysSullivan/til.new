@@ -47,4 +47,3 @@ dist/
 # Contentlayer
 .contentlayer
 .cache
-sqlite.db
