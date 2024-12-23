@@ -5,10 +5,12 @@ import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { useIsAuthenticated } from '@/hooks/data';
 import { save } from '@/hooks/data';
+import { useAuthActions } from '@convex-dev/auth/react';
 
 export function NoteInput() {
 	const [value, setValue] = useState<string | undefined>(undefined);
-	const [title, setTitle] = useState<string | undefined>(undefined);
+	const [title, setTitle] = useState<string | undefined>('');
+	const { signIn } = useAuthActions();
 	const isAuthenticated = useIsAuthenticated();
 	const editor = useMemo(
 		() => <Editor initialValue={value} onChange={setValue} />,
@@ -32,7 +34,7 @@ export function NoteInput() {
 					Publish
 				</Button>
 			) : (
-				<Button variant="outline" onClick={() => console.log('sign in')}>
+				<Button variant="outline" onClick={() => signIn('github')}>
 					Sign In to Publish
 				</Button>
 			)}

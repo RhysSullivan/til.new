@@ -11,6 +11,7 @@ import {
 	ChevronRight,
 	FileText,
 	FolderClosed,
+	LogOut,
 	Plus,
 	Settings,
 } from 'lucide-react';
@@ -22,7 +23,39 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useRepositories } from '@/hooks/data';
+import { useAuthedUser, useRepositories } from '@/hooks/data';
+import { useAuthActions } from '@convex-dev/auth/react';
+
+function UserDropdown(){
+	const { data: user } = useAuthedUser();
+	const { signOut } = useAuthActions();
+
+	if(!user) return null;
+	return (
+		<DropdownMenu>
+					<DropdownMenuTrigger asChild>
+						<Button variant="ghost" className="w-full justify-start h-12">
+							<Avatar className="h-5 w-5 mr-2">
+								<AvatarImage src={user.image} />
+								<AvatarFallback>{user.name?.charAt(0)}</AvatarFallback>
+							</Avatar>
+							{user.name}
+						</Button>
+					</DropdownMenuTrigger>
+					<DropdownMenuContent align="center" className="w-56">
+						<DropdownMenuItem>
+							<Settings className="mr-2 h-4 w-4" />
+							Settings
+						</DropdownMenuItem>
+						<DropdownMenuItem onClick={() => signOut()}>
+							<LogOut className="mr-2 h-4 w-4" />
+							Sign out
+						</DropdownMenuItem>
+					</DropdownMenuContent>
+				</DropdownMenu>
+	)
+}
+
 
 export function Sidebar() {
 	const [openRepos, setOpenRepos] = useState<string[]>([]);
@@ -35,28 +68,11 @@ export function Sidebar() {
 		);
 	};
 	const { repositories } = useRepositories();
-
+	const { data: user } = useAuthedUser();
 	return (
 		<div className="w-64 border-r bg-muted/50 flex flex-col">
 			<div className="border-b max-h-12 min-h-12">
-				<DropdownMenu>
-					<DropdownMenuTrigger asChild>
-						<Button variant="ghost" className="w-full justify-start h-12">
-							<Avatar className="h-5 w-5 mr-2">
-								<AvatarImage src="/placeholder.svg" />
-								<AvatarFallback>GH</AvatarFallback>
-							</Avatar>
-							My Account
-						</Button>
-					</DropdownMenuTrigger>
-					<DropdownMenuContent align="center" className="w-56">
-						<DropdownMenuItem>
-							<Settings className="mr-2 h-4 w-4" />
-							Settings
-						</DropdownMenuItem>
-						<DropdownMenuItem>Sign out</DropdownMenuItem>
-					</DropdownMenuContent>
-				</DropdownMenu>
+				<UserDropdown />
 			</div>
 			<ScrollArea className="flex-1 px-2 py-4">
 				<div className="space-y-2">

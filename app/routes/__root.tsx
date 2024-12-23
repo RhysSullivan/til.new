@@ -85,7 +85,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <head>
         <Meta />
       </head>
-      <body>
+      <body className="bg-background">
           <div className="flex-grow min-h-0 h-full flex flex-col">
             {children}
             <Toaster />

@@ -1,3 +1,9 @@
+import { convexQuery } from "@convex-dev/react-query";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "convex/_generated/api";
+import {  useConvexAuth } from "convex/react";
+
+
 interface Repository {
 	name: string;
 	files: string[];
@@ -17,12 +23,19 @@ const repositories: Repository[] = [
 
 export function useRepositories() {
 	return {
-		repositories: repositories as Repository[],
+		repositories: [] as Repository[],
 	};
 }
 
+export function useAuthedUser() {
+	const user = useQuery(convexQuery(api.auth.currentUser, {}))
+	console.log("user",user);
+	return user;
+}
+
 export function useIsAuthenticated() {
-	return true;
+	const { isAuthenticated } = useConvexAuth();
+	return isAuthenticated;
 }
 
 export function save(note: {
