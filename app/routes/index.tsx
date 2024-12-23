@@ -3,6 +3,9 @@ import { Link, createFileRoute } from '@tanstack/react-router';
 import { convexQuery } from '@convex-dev/react-query';
 import { api } from 'convex/_generated/api';
 import { Loader } from '@/components/loader';
+import { Sidebar } from '@/components/sidebar';
+import { Header } from '@/components/header';
+import { MainContent } from '@/components/main-content';
 
 export const Route = createFileRoute('/')({
 	component: Home,
@@ -11,11 +14,12 @@ export const Route = createFileRoute('/')({
 
 function Home() {
 	return (
-		<div className="p-8 space-y-2">
-			<h1 className="text-2xl font-black">Boards</h1>
-			<ul className="flex flex-wrap list-disc">
-				
-			</ul>
+		<div className="flex h-screen bg-background">
+		<Sidebar />
+		<div className="flex-1 flex flex-col overflow-hidden">
+		  <Header />
+		  <MainContent />
 		</div>
+	  </div>
 	);
 }
