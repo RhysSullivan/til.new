@@ -48,3 +48,5 @@ dist/
 .contentlayer
 .cache
 sqlite.db
+
+playground.ts

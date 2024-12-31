@@ -22,9 +22,9 @@ const repositories: Repository[] = [
 ];
 
 export function useRepositories() {
-	return {
-		repositories: [] as Repository[],
-	};
+	const data = useQuery(convexQuery(api.github.getReposForUser, {}))
+	console.log("data",data.data);
+	return data;
 }
 
 export function useAuthedUser() {

@@ -9,7 +9,6 @@ import { MainContent } from '@/components/main-content';
 
 export const Route = createFileRoute('/')({
 	component: Home,
-	pendingComponent: () => <Loader />,
 });
 
 function Home() {

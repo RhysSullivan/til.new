@@ -80,7 +80,6 @@
     --novel-highlight-orange: #5c3a1a;
     --novel-highlight-pink: #5c1a3a;
     --novel-highlight-gray: #3a3a3a;
-
   }
 }
 
@@ -110,7 +109,9 @@
   pointer-events: none;
 }
 
-ProseMirror { @apply p-12 px-8 sm:px-12; }
+ProseMirror {
+  @apply p-12 px-8 sm:px-12;
+}
 .ProseMirror .is-editor-empty:first-child::before {
   content: attr(data-placeholder);
   float: left;
@@ -315,4 +316,10 @@ span[style] > strong {
 
 mark[style] > strong {
   color: inherit;
+}
+
+@layer utilities {
+  .grid-cols-53 {
+    grid-template-columns: repeat(53, minmax(0, 1fr));
+  }
 }

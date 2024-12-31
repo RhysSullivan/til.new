@@ -67,7 +67,7 @@ export function Sidebar() {
 				: [...prev, name],
 		);
 	};
-	const { repositories } = useRepositories();
+	const { data: repos } = useRepositories();
 	const { data: user } = useAuthedUser();
 	return (
 		<div className="w-64 border-r bg-muted/50 flex flex-col">
@@ -76,7 +76,7 @@ export function Sidebar() {
 			</div>
 			<ScrollArea className="flex-1 px-2 py-4">
 				<div className="space-y-2">
-					{repositories.map((repo) => (
+					{repos?.map((repo) => (
 						<Collapsible
 							key={repo.name}
 							open={openRepos.includes(repo.name)}
@@ -96,7 +96,7 @@ export function Sidebar() {
 									{repo.name}
 								</Button>
 							</CollapsibleTrigger>
-							<CollapsibleContent className="pl-8 space-y-1">
+							{/* <CollapsibleContent className="pl-8 space-y-1">
 								{repo.files.map((file) => (
 									<Button
 										key={file}
@@ -107,15 +107,18 @@ export function Sidebar() {
 										{file.split('/').pop()}
 									</Button>
 								))}
-							</CollapsibleContent>
+							</CollapsibleContent> */}
 						</Collapsible>
 					))}
 					<Button
 						variant="ghost"
 						className="w-full justify-start text-muted-foreground"
+						asChild
 					>
-						<Plus className="mr-2 h-4 w-4" />
-						Add Repository
+						<a href="https://github.com/apps/til-new-dev/installations/new" target="_blank">
+							<Plus className="mr-2 h-4 w-4" />
+							Add Repository
+						</a>
 					</Button>
 				</div>
 			</ScrollArea>
