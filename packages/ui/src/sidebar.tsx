@@ -2,6 +2,7 @@
 
 import {
 	ChevronRight,
+	FileText,
 	FolderClosed,
 	LogOut,
 	Plus,
@@ -18,7 +19,11 @@ import {
 } from './ui/dropdown-menu';
 import { Button } from './ui/button';
 import { ScrollArea } from './ui/scroll-area';
-import { Collapsible, CollapsibleTrigger } from './ui/collapsible';
+import {
+	Collapsible,
+	CollapsibleContent,
+	CollapsibleTrigger,
+} from './ui/collapsible';
 import { signOut } from './utils/auth';
 
 function UserDropdown() {
@@ -67,9 +72,9 @@ export function Sidebar() {
 			<div className="border-b max-h-12 min-h-12">
 				<UserDropdown />
 			</div>
-			<ScrollArea className="flex-1 px-2 py-4">
+			<ScrollArea className="flex-1 px-2 py-4 overflow-x-auto w-64 max-w-64">
 				<div className="space-y-2">
-					{repos?.repositories?.map((repo) => (
+					{repos?.map((repo) => (
 						<Collapsible
 							key={repo.name}
 							open={openRepos.includes(repo.name)}
@@ -89,18 +94,18 @@ export function Sidebar() {
 									{repo.name}
 								</Button>
 							</CollapsibleTrigger>
-							{/* <CollapsibleContent className="pl-8 space-y-1">
+							<CollapsibleContent className="pl-8 space-y-1">
 								{repo.files.map((file) => (
 									<Button
-										key={file}
+										key={file.path}
 										variant="ghost"
 										className="w-full justify-start h-8 font-normal"
 									>
 										<FileText className="h-4 w-4 mr-2" />
-										{file.split('/').pop()}
+										{file.path?.split('/').pop()}
 									</Button>
 								))}
-							</CollapsibleContent> */}
+							</CollapsibleContent>
 						</Collapsible>
 					))}
 					<Button
