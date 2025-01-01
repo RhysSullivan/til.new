@@ -47,6 +47,5 @@ dist/
 # Contentlayer
 .contentlayer
 .cache
-sqlite.db
 
 playground.ts

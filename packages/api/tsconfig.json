@@ -1,0 +1,5 @@
+{
+	"extends": "@til/tsconfig/internal-package.json",
+	"include": ["src", "../../reset.d.ts"],
+	"exclude": ["node_modules"]
+}
