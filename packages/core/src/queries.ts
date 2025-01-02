@@ -11,7 +11,6 @@ export async function getAccount(userId: string) {
 		return null;
 	}
 	const accessToken = found.accessToken;
-	console.log('accessToken', accessToken);
 	const octokit = new Octokit({
 		auth: accessToken,
 	});

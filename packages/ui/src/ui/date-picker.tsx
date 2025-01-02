@@ -18,7 +18,6 @@ export function DatePickerWithPresets(props: {
 		from: props.from ?? addDays(new Date(), -7),
 		to: props.to ?? new Date(),
 	});
-	console.log('selected range is', selectedRange);
 
 	return (
 		<Select

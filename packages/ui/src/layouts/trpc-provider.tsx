@@ -1,5 +1,5 @@
 'use client';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query';
 import { httpBatchLink, loggerLink } from '@trpc/client';
 import React, { useState } from 'react';
 import { trpc } from '../utils/client';
@@ -7,6 +7,8 @@ import { trpc } from '../utils/client';
 import { transformer } from '@til/api/transformer';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
+import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 
 const getBaseUrl = () => {
 	if (typeof window !== 'undefined') return ''; // browser should use relative url
@@ -32,6 +34,15 @@ export function TRPCProvider(props: { children?: React.ReactNode } | null) {
 				},
 			}),
 	);
+
+	const [persister] = useState(
+		typeof window !== 'undefined'
+			? createSyncStoragePersister({
+					storage: window.localStorage,
+				})
+			: null,
+	);
+
 	const [trpcClient] = useState(() =>
 		trpc.createClient({
 			transformer,
@@ -50,10 +61,13 @@ export function TRPCProvider(props: { children?: React.ReactNode } | null) {
 	);
 	return (
 		<trpc.Provider client={trpcClient} queryClient={queryClient}>
-			<QueryClientProvider client={queryClient}>
+			<PersistQueryClientProvider
+				client={queryClient}
+				persistOptions={{ persister }}
+			>
 				<ToastContainer />
 				{props && props.children}
-			</QueryClientProvider>
+			</PersistQueryClientProvider>
 		</trpc.Provider>
 	);
 }

@@ -25,6 +25,7 @@ import {
 	CollapsibleTrigger,
 } from './ui/collapsible';
 import { signOut } from './utils/auth';
+import { FileTree } from './file-tree';
 
 function UserDropdown() {
 	const { data: user } = useAuthedUser();
@@ -67,6 +68,7 @@ export function Sidebar() {
 	};
 	const { data: repos } = useRepositories();
 	const { data: user } = useAuthedUser();
+
 	return (
 		<div className="w-64 border-r bg-muted/50 flex flex-col">
 			<div className="border-b max-h-12 min-h-12">
@@ -75,39 +77,15 @@ export function Sidebar() {
 			<ScrollArea className="flex-1 px-2 py-4 overflow-x-auto w-64 max-w-64">
 				<div className="space-y-2">
 					{repos?.map((repo) => (
-						<Collapsible
-							key={repo.name}
-							open={openRepos.includes(repo.name)}
-							onOpenChange={() => toggleRepo(repo.name)}
-						>
-							<CollapsibleTrigger asChild>
-								<Button
-									variant="ghost"
-									className="w-full justify-start font-normal"
-								>
-									<ChevronRight
-										className={`h-4 w-4 mr-2 transition-transform ${
-											openRepos.includes(repo.name) ? 'rotate-90' : ''
-										}`}
-									/>
-									<FolderClosed className="h-4 w-4 mr-2" />
-									{repo.name}
-								</Button>
-							</CollapsibleTrigger>
-							<CollapsibleContent className="pl-8 space-y-1">
-								{repo.files.map((file) => (
-									<Button
-										key={file.path}
-										variant="ghost"
-										className="w-full justify-start h-8 font-normal"
-									>
-										<FileText className="h-4 w-4 mr-2" />
-										{file.path?.split('/').pop()}
-									</Button>
-								))}
-							</CollapsibleContent>
-						</Collapsible>
+						<div key={repo.name} className="space-y-2">
+							<div className="font-medium text-sm mb-2 px-2">{repo.name}</div>
+							<FileTree
+								files={repo.files.map((file) => file.path ?? '')}
+								filters={['.tsx', '.ts', '.js', '.jsx', '.json']}
+							/>
+						</div>
 					))}
+
 					<Button
 						variant="ghost"
 						className="w-full justify-start text-muted-foreground"
