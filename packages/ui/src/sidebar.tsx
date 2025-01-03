@@ -1,8 +1,10 @@
 'use client';
 
 import {
+	ChevronDown,
 	ChevronRight,
 	FileText,
+	Folder,
 	FolderClosed,
 	LogOut,
 	Plus,
@@ -56,6 +58,30 @@ function UserDropdown() {
 	);
 }
 
+function RepositoryItem({
+	repo,
+}: {
+	repo: { name: string; files: { path?: string }[] };
+}) {
+	const [isOpen, setIsOpen] = useState(false);
+	return (
+		<div className="space-y-2">
+			<Collapsible open={isOpen} onOpenChange={setIsOpen}>
+				<CollapsibleTrigger className="flex items-center space-x-1 hover:bg-accent hover:text-accent-foreground rounded p-1 w-full text-left">
+					{isOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+					<Folder size={16} className="text-blue-500 dark:text-blue-400" />
+					<span className="truncate">{repo.name}</span>
+				</CollapsibleTrigger>
+				<CollapsibleContent>
+					<div className="pl-2">
+						<FileTree paths={repo.files.map((file) => file.path ?? '')} />
+					</div>
+				</CollapsibleContent>
+			</Collapsible>
+		</div>
+	);
+}
+
 export function Sidebar() {
 	const [openRepos, setOpenRepos] = useState<string[]>([]);
 
@@ -77,13 +103,7 @@ export function Sidebar() {
 			<ScrollArea className="flex-1 px-2 py-4 overflow-x-auto w-64 max-w-64">
 				<div className="space-y-2">
 					{repos?.map((repo) => (
-						<div key={repo.name} className="space-y-2">
-							<div className="font-medium text-sm mb-2 px-2">{repo.name}</div>
-							<FileTree
-								files={repo.files.map((file) => file.path ?? '')}
-								filters={['.tsx', '.ts', '.js', '.jsx', '.json']}
-							/>
-						</div>
+						<RepositoryItem key={repo.name} repo={repo} />
 					))}
 
 					<Button
