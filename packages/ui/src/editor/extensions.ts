@@ -92,7 +92,9 @@ const starterKit = StarterKit.configure({
 	codeBlock: false,
 	code: {
 		HTMLAttributes: {
-			class: cx('rounded-md bg-muted  px-1.5 py-1 font-mono font-medium'),
+			class: cx(
+				'rounded-md bg-muted px-1.5 py-1 font-mono font-medium whitespace-pre',
+			),
 			spellcheck: 'false',
 		},
 	},
@@ -109,7 +111,7 @@ const codeBlockLowlight = CodeBlockLowlight.configure({
 	HTMLAttributes: {
 		class: cx(
 			'rounded-md bg-muted text-muted-foreground border p-5 font-mono font-medium',
-			'overflow-x-auto',
+			'overflow-x-auto whitespace-pre tab-size-4',
 		),
 	},
 });
@@ -120,7 +122,7 @@ const markdownExtension = MarkdownExtension.configure({
 	tightListClass: 'tight',
 	bulletListMarker: '-',
 	linkify: false,
-	breaks: false,
+	breaks: true,
 	transformPastedText: false,
 	transformCopiedText: false,
 });
