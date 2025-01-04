@@ -13,6 +13,7 @@ import {
 } from './ui/collapsible';
 import { ScrollArea, ScrollBar } from './ui/scroll-area';
 import { cn } from './utils/utils';
+import { Link } from './ui/link';
 
 interface TreeNode {
 	name: string;
@@ -138,7 +139,7 @@ const FileTreeNode: React.FC<FileTreeNodeProps> = ({
 					</CollapsibleContent>
 				</Collapsible>
 			) : (
-				<a
+				<Link
 					href={`/${encodeURIComponent(repoName)}/${encodeURIComponent(path)}`}
 					className={cn(
 						'flex items-center gap-2 w-full rounded-sm px-2 py-1 text-sm text-foreground/70 hover:bg-accent hover:text-accent-foreground text-left',
@@ -148,7 +149,7 @@ const FileTreeNode: React.FC<FileTreeNodeProps> = ({
 				>
 					<File size={16} className="shrink-0 text-foreground/50" />
 					<span className="truncate flex-1">{displayName}</span>
-				</a>
+				</Link>
 			)}
 		</div>
 	);

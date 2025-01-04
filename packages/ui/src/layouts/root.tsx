@@ -53,11 +53,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
 				colorScheme: 'dark',
 			}}
 		>
-			{/* eslint-disable-next-line @next/next/no-head-element */}
-			<head>
-				<link rel={'preconnect'} href={'https://cdn.discordapp.com'} />
-				<link rel={'dns-prefetch'} href={'https://cdn.discordapp.com'} />
-			</head>
 			<body className={`${montserrat.variable} ${sourceSans3.variable}`}>
 				<Providers>{children}</Providers>
 			</body>
