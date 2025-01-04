@@ -1,3 +1,4 @@
+'use client';
 import Editor from './editor/advanced-editor';
 import { useMemo, useState } from 'react';
 import { save, useIsAuthenticated } from './hooks/data';
@@ -5,8 +6,10 @@ import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { signIn } from './utils/auth';
 
-export function NoteInput() {
-	const [value, setValue] = useState<string | undefined>(undefined);
+export function NoteInput(props: {
+	initialContent?: string;
+}) {
+	const [value, setValue] = useState<string | undefined>(props.initialContent);
 	const [title, setTitle] = useState<string | undefined>('');
 	const isAuthenticated = useIsAuthenticated();
 	const editor = useMemo(

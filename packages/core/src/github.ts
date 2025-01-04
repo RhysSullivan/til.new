@@ -3,7 +3,7 @@ import { Octokit } from '@octokit/rest';
 import { createAppAuth } from '@octokit/auth-app';
 import { sharedEnvs } from '@til/env/env';
 
-export async function listReposForUser(username: string) {
+export async function getInstallation(username: string) {
 	const octokit = new Octokit({
 		authStrategy: createAppAuth,
 		auth: {
@@ -12,9 +12,16 @@ export async function listReposForUser(username: string) {
 			type: 'app',
 		},
 	});
+
 	const installationResponse = await octokit.apps.getUserInstallation({
 		username,
 	});
+
+	return installationResponse.data;
+}
+
+export async function listReposForUser(username: string) {
+	const installation = await getInstallation(username);
 
 	// Create a new authenticated client for the installation
 	const installationOctokit = new Octokit({
@@ -22,7 +29,7 @@ export async function listReposForUser(username: string) {
 		auth: {
 			appId: 1074737,
 			privateKey: sharedEnvs.GITHUB_PRIVATE_KEY,
-			installationId: installationResponse.data.id,
+			installationId: installation.id,
 		},
 	});
 
@@ -102,4 +109,31 @@ export async function listReposWithFiles(username: string) {
 	);
 
 	return reposWithFiles;
+}
+
+export async function getFile(input: {
+	username: string;
+	repo: string;
+	file: string;
+}) {
+	const { username, repo, file } = input;
+	const installation = await getInstallation(username);
+
+	const octokit = new Octokit({
+		authStrategy: createAppAuth,
+		auth: {
+			appId: 1074737,
+			privateKey: sharedEnvs.GITHUB_PRIVATE_KEY,
+			installationId: installation.id,
+			type: 'app',
+		},
+	});
+
+	const { data } = await octokit.repos.getContent({
+		owner: username,
+		repo,
+		path: file,
+	});
+
+	return data;
 }

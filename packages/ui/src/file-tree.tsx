@@ -4,28 +4,7 @@ interface TreeNode {
 	isFile: boolean;
 }
 
-export function parseFileTree(paths: string[]): TreeNode {
-	const root: TreeNode = { name: 'root', children: {}, isFile: false };
-
-	paths.forEach((path) => {
-		const parts = path.split('/');
-		let currentNode = root;
-
-		parts.forEach((part, index) => {
-			if (!currentNode.children[part]) {
-				currentNode.children[part] = {
-					name: part,
-					children: {},
-					isFile: index === parts.length - 1,
-				};
-			}
-			currentNode = currentNode.children[part];
-		});
-	});
-
-	return root;
-}
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ChevronRight, ChevronDown, Folder, File } from 'lucide-react';
 import {
 	Collapsible,
@@ -33,54 +12,215 @@ import {
 	CollapsibleContent,
 } from './ui/collapsible';
 import { ScrollArea, ScrollBar } from './ui/scroll-area';
+import { cn } from './utils/utils';
 
-interface FileTreeProps {
-	paths: string[];
+interface TreeNode {
+	name: string;
+	children: Record<string, TreeNode>;
+	isFile: boolean;
 }
 
-const FileTreeNode: React.FC<{ node: TreeNode; level: number }> = ({
+function parseFileTree(paths: string[]): TreeNode {
+	const root: TreeNode = { name: 'root', children: {}, isFile: false };
+
+	paths.forEach((path) => {
+		const parts = path.split('/');
+		let currentNode = root;
+
+		parts.forEach((part, index) => {
+			if (part === '') return;
+			const safeName = part.replace(/[[\]]/g, '_');
+
+			if (!currentNode.children[safeName]) {
+				currentNode.children[safeName] = {
+					name: part,
+					children: {},
+					isFile: index === parts.length - 1,
+				};
+			}
+			currentNode = currentNode.children[safeName];
+		});
+	});
+
+	return root;
+}
+
+interface FileTreeNodeProps {
+	node: TreeNode;
+	level: number;
+	selectedPath: string;
+	onSelect: (path: string) => void;
+	path: string;
+	repoName: string;
+}
+
+const getStorageKey = (repoName: string) => `file-tree-state-${repoName}`;
+
+const FileTreeNode: React.FC<FileTreeNodeProps> = ({
 	node,
 	level,
+	selectedPath,
+	onSelect,
+	path,
+	repoName,
 }) => {
 	const [isOpen, setIsOpen] = React.useState(false);
+
+	useEffect(() => {
+		const storageKey = getStorageKey(repoName);
+		const savedState = localStorage.getItem(storageKey);
+		if (savedState) {
+			const openPaths = JSON.parse(savedState) as string[];
+			setIsOpen(openPaths.includes(path));
+		}
+	}, [path, repoName]);
+
+	const handleOpenChange = (open: boolean) => {
+		setIsOpen(open);
+		const storageKey = getStorageKey(repoName);
+		const savedState = localStorage.getItem(storageKey);
+		const openPaths = savedState ? (JSON.parse(savedState) as string[]) : [];
+
+		if (open) {
+			if (!openPaths.includes(path)) {
+				localStorage.setItem(storageKey, JSON.stringify([...openPaths, path]));
+			}
+		} else {
+			localStorage.setItem(
+				storageKey,
+				JSON.stringify(openPaths.filter((p: string) => p !== path)),
+			);
+		}
+	};
+
 	const hasChildren = Object.keys(node.children).length > 0;
+	const isSelected = path === selectedPath;
+
+	const displayName =
+		node.name.length > 30 ? node.name.slice(0, 30) + '...' : node.name;
 
 	return (
-		<div style={{ marginLeft: `${level * 16}px` }}>
+		<div style={{ marginLeft: `${level * 4}px` }}>
 			{hasChildren ? (
-				<Collapsible open={isOpen} onOpenChange={setIsOpen}>
-					<CollapsibleTrigger className="flex items-center space-x-1 hover:bg-accent hover:text-accent-foreground rounded p-1 w-full text-left">
-						{isOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-						<Folder size={16} className="text-blue-500 dark:text-blue-400" />
-						<span className="truncate">{node.name}</span>
+				<Collapsible open={isOpen} onOpenChange={handleOpenChange}>
+					<CollapsibleTrigger
+						className={cn(
+							'flex items-center gap-2 w-full rounded-sm px-2 py-1 text-sm text-foreground/70 hover:bg-accent hover:text-accent-foreground text-left',
+							isSelected && 'bg-accent text-accent-foreground',
+						)}
+						onClick={() => onSelect(path)}
+					>
+						{isOpen ? (
+							<ChevronDown size={16} className="shrink-0 text-foreground/50" />
+						) : (
+							<ChevronRight size={16} className="shrink-0 text-foreground/50" />
+						)}
+						<Folder
+							size={16}
+							className="shrink-0 text-blue-500 dark:text-blue-400"
+						/>
+						<span className="truncate flex-1" title={node.name}>
+							{displayName}
+						</span>
 					</CollapsibleTrigger>
 					<CollapsibleContent>
-						{Object.values(node.children).map((child, index) => (
-							<FileTreeNode key={index} node={child} level={level + 1} />
+						{Object.entries(node.children).map(([key, child]) => (
+							<FileTreeNode
+								key={key}
+								node={child}
+								level={level + 1}
+								selectedPath={selectedPath}
+								onSelect={onSelect}
+								path={`${path}/${child.name}`}
+								repoName={repoName}
+							/>
 						))}
 					</CollapsibleContent>
 				</Collapsible>
 			) : (
-				<div className="flex items-center space-x-1 hover:bg-accent hover:text-accent-foreground rounded p-1">
-					<File size={16} className="text-foreground/70" />
-					<span className="truncate">{node.name}</span>
-				</div>
+				<a
+					href={`/${encodeURIComponent(repoName)}/${encodeURIComponent(path)}`}
+					className={cn(
+						'flex items-center gap-2 w-full rounded-sm px-2 py-1 text-sm text-foreground/70 hover:bg-accent hover:text-accent-foreground text-left',
+						isSelected && 'bg-accent text-accent-foreground',
+					)}
+					title={node.name}
+				>
+					<File size={16} className="shrink-0 text-foreground/50" />
+					<span className="truncate flex-1">{displayName}</span>
+				</a>
 			)}
 		</div>
 	);
 };
 
-export const FileTree: React.FC<FileTreeProps> = ({ paths }) => {
+interface FileTreeProps {
+	paths: string[];
+	repoName: string;
+}
+
+const REPO_OPEN_STATE_KEY = 'repo-open-state';
+
+export function FileTree({ paths, repoName }: FileTreeProps) {
+	const [selectedPath, setSelectedPath] = React.useState('');
+	const [isRepoOpen, setIsRepoOpen] = React.useState(false);
 	const tree = parseFileTree(paths);
 
+	useEffect(() => {
+		const savedState = localStorage.getItem(REPO_OPEN_STATE_KEY);
+		if (savedState) {
+			const openRepos = JSON.parse(savedState) as string[];
+			setIsRepoOpen(openRepos.includes(repoName));
+		}
+	}, [repoName]);
+
+	const handleRepoOpenChange = (open: boolean) => {
+		setIsRepoOpen(open);
+		const savedState = localStorage.getItem(REPO_OPEN_STATE_KEY);
+		const openRepos = savedState ? (JSON.parse(savedState) as string[]) : [];
+
+		if (open) {
+			if (!openRepos.includes(repoName)) {
+				localStorage.setItem(
+					REPO_OPEN_STATE_KEY,
+					JSON.stringify([...openRepos, repoName]),
+				);
+			}
+		} else {
+			localStorage.setItem(
+				REPO_OPEN_STATE_KEY,
+				JSON.stringify(openRepos.filter((name) => name !== repoName)),
+			);
+		}
+	};
+
 	return (
-		<ScrollArea className="max-w-[300px] max-h-[500px] h-full w-full ">
-			<div className="p-2">
-				{Object.values(tree.children).map((child, index) => (
-					<FileTreeNode key={index} node={child} level={0} />
-				))}
-			</div>
-			<ScrollBar orientation="horizontal" className="pb-4" />
-		</ScrollArea>
+		<div className="flex-1">
+			<Collapsible open={isRepoOpen} onOpenChange={handleRepoOpenChange}>
+				<CollapsibleTrigger className="flex items-center space-x-1 hover:bg-accent hover:text-accent-foreground rounded p-1 w-full text-left">
+					{isRepoOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+					<Folder size={16} className="text-blue-500 dark:text-blue-400" />
+					<span className="truncate">{repoName}</span>
+				</CollapsibleTrigger>
+				<CollapsibleContent>
+					<ScrollArea className="max-w-[300px] max-h-[500px] h-full w-full">
+						<div className="p-2 pl-6">
+							{Object.entries(tree.children).map(([key, child]) => (
+								<FileTreeNode
+									key={key}
+									node={child}
+									level={0}
+									selectedPath={selectedPath}
+									onSelect={setSelectedPath}
+									path={child.name}
+									repoName={repoName}
+								/>
+							))}
+						</div>
+						<ScrollBar orientation="horizontal" />
+					</ScrollArea>
+				</CollapsibleContent>
+			</Collapsible>
+		</div>
 	);
-};
+}

@@ -4,9 +4,6 @@ const config = {
 	reactStrictMode: true,
 	pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
 	transpilePackages: ['@til/api', '@til/core', '@til/ui', '@til/env'],
-	experimental: {
-		dynamicIO: true,
-	},
 	productionBrowserSourceMaps: true,
 	rewrites: async () => {
 		return [

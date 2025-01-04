@@ -63,21 +63,12 @@ function RepositoryItem({
 }: {
 	repo: { name: string; files: { path?: string }[] };
 }) {
-	const [isOpen, setIsOpen] = useState(false);
 	return (
 		<div className="space-y-2">
-			<Collapsible open={isOpen} onOpenChange={setIsOpen}>
-				<CollapsibleTrigger className="flex items-center space-x-1 hover:bg-accent hover:text-accent-foreground rounded p-1 w-full text-left">
-					{isOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-					<Folder size={16} className="text-blue-500 dark:text-blue-400" />
-					<span className="truncate">{repo.name}</span>
-				</CollapsibleTrigger>
-				<CollapsibleContent>
-					<div className="pl-2">
-						<FileTree paths={repo.files.map((file) => file.path ?? '')} />
-					</div>
-				</CollapsibleContent>
-			</Collapsible>
+			<FileTree
+				paths={repo.files.map((file) => file.path ?? '')}
+				repoName={repo.name}
+			/>
 		</div>
 	);
 }

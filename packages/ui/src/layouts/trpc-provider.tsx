@@ -26,7 +26,7 @@ export function TRPCProvider(props: { children?: React.ReactNode } | null) {
 			new QueryClient({
 				defaultOptions: {
 					queries: {
-						cacheTime: 0, //1000 * 60 * 60 * 24, // 24 hours
+						cacheTime: 1000 * 60 * 60 * 24, // 24 hours
 						refetchOnReconnect: false,
 						refetchOnMount: false,
 						refetchOnWindowFocus: false,
