@@ -1,7 +1,7 @@
 import { Octokit } from '@octokit/rest';
-
 import { createAppAuth } from '@octokit/auth-app';
 import { sharedEnvs } from '@til/env/env';
+import type { Repository } from '@octokit/webhooks-types';
 
 export async function getInstallation(username: string) {
 	const octokit = new Octokit({
@@ -39,7 +39,9 @@ export async function listReposForUser(username: string) {
 			per_page: 100,
 		});
 
-	return reposResponse.data;
+	return {
+		repositories: reposResponse.data.repositories as Repository[],
+	};
 }
 
 export async function listReposWithFiles(username: string) {
@@ -136,4 +138,61 @@ export async function getFile(input: {
 	});
 
 	return data;
+}
+
+export async function saveFile(input: {
+	username: string;
+	repo: string;
+	path: string;
+	content: string;
+	message?: string;
+}) {
+	const { username, repo, path, content, message } = input;
+	const installation = await getInstallation(username);
+
+	const octokit = new Octokit({
+		authStrategy: createAppAuth,
+		auth: {
+			appId: 1074737,
+			privateKey: sharedEnvs.GITHUB_PRIVATE_KEY,
+			installationId: installation.id,
+			type: 'app',
+		},
+	});
+
+	try {
+		// Try to get the current file to get its SHA
+		const { data: existingFile } = await octokit.repos.getContent({
+			owner: username,
+			repo,
+			path,
+		});
+
+		if (!('sha' in existingFile)) {
+			throw new Error('Unexpected response format');
+		}
+
+		// Update existing file
+		await octokit.repos.createOrUpdateFileContents({
+			owner: username,
+			repo,
+			path,
+			message: message || `Update ${path}`,
+			content: Buffer.from(content).toString('base64'),
+			sha: existingFile.sha,
+		});
+	} catch (error) {
+		if ((error as any).status === 404) {
+			// File doesn't exist, create it
+			await octokit.repos.createOrUpdateFileContents({
+				owner: username,
+				repo,
+				path,
+				message: message || `Create ${path}`,
+				content: Buffer.from(content).toString('base64'),
+			});
+		} else {
+			throw error;
+		}
+	}
 }

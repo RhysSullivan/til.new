@@ -1,11 +1,22 @@
 'use client';
 import Editor from './editor/advanced-editor';
-import { useMemo, useState } from 'react';
-import { save, useIsAuthenticated } from './hooks/data';
+import { useMemo, useState, useEffect } from 'react';
+import { save, useIsAuthenticated, useRepositories } from './hooks/data';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { signIn } from './utils/auth';
 import frontMatter from 'front-matter';
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from './ui/select';
+import type { Repository } from '@octokit/webhooks-types';
+import { Loader2 } from 'lucide-react';
+
+const SELECTED_REPO_KEY = 'selected-repo';
 
 interface FrontMatterAttributes {
 	title?: string;
@@ -33,7 +44,19 @@ export function NoteInput({ initialContent }: NoteInputProps) {
 		return body;
 	});
 
+	const [selectedRepo, setSelectedRepo] = useState<string | undefined>(
+		undefined,
+	);
+	const [isSaving, setIsSaving] = useState(false);
 	const isAuthenticated = useIsAuthenticated();
+	const repositories = useRepositories();
+
+	// Save selected repo to localStorage when it changes
+	const handleRepoChange = (repoName: string) => {
+		setSelectedRepo(repoName);
+		localStorage.setItem(SELECTED_REPO_KEY, repoName);
+	};
+
 	const editor = useMemo(
 		() => <Editor initialValue={markdown} onChange={setMarkdown} />,
 		[markdown],
@@ -58,12 +81,24 @@ export function NoteInput({ initialContent }: NoteInputProps) {
 		return `---\n${frontmatterEntries}\n---\n`;
 	};
 
-	const handleSave = () => {
-		if (!markdown || !metadata.title) return;
+	const handleSave = async () => {
+		if (!markdown || !metadata.title || !selectedRepo || isSaving) return;
 
-		const frontmatterStr = createFrontmatterString(metadata);
-		const fullContent = `${frontmatterStr}\n${markdown}`;
-		save({ title: metadata.title, value: fullContent });
+		setIsSaving(true);
+		try {
+			const frontmatterStr = createFrontmatterString(metadata);
+			const fullContent = `${frontmatterStr}\n${markdown}`;
+			await save({
+				title: metadata.title,
+				value: fullContent,
+				repo: selectedRepo,
+			});
+			// Clear the form after successful save
+			setMetadata({});
+			setMarkdown('');
+		} finally {
+			setIsSaving(false);
+		}
 	};
 
 	const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -80,13 +115,38 @@ export function NoteInput({ initialContent }: NoteInputProps) {
 			/>
 			{editor}
 			{isAuthenticated ? (
-				<Button
-					disabled={!markdown || !metadata.title}
-					variant="outline"
-					onClick={handleSave}
-				>
-					Publish
-				</Button>
+				<div className="flex flex-col gap-4">
+					<Select
+						value={selectedRepo ?? repositories.data?.at(0)?.name}
+						onValueChange={handleRepoChange}
+						disabled={repositories.isLoading}
+					>
+						<SelectTrigger>
+							{repositories.isLoading ? (
+								<div className="flex items-center gap-2">
+									<Loader2 className="h-4 w-4 animate-spin" />
+									<span>Loading repositories...</span>
+								</div>
+							) : (
+								<SelectValue placeholder="Select a repository" />
+							)}
+						</SelectTrigger>
+						<SelectContent>
+							{repositories.data?.map((repo) => (
+								<SelectItem key={repo.id} value={repo.name}>
+									{repo.name}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
+					<Button
+						disabled={!markdown || !metadata.title || !selectedRepo || isSaving}
+						variant="outline"
+						onClick={handleSave}
+					>
+						{isSaving ? 'Publishing...' : 'Publish'}
+					</Button>
+				</div>
 			) : (
 				<Button
 					variant="outline"
