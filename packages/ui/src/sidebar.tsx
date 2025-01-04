@@ -1,16 +1,6 @@
 'use client';
 
-import {
-	ChevronDown,
-	ChevronRight,
-	FileText,
-	Folder,
-	FolderClosed,
-	LogOut,
-	Plus,
-	Settings,
-} from 'lucide-react';
-import { useState } from 'react';
+import { LogOut, Plus } from 'lucide-react';
 import { useAuthedUser, useRepositories } from './hooks/data';
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
 import {
@@ -21,11 +11,6 @@ import {
 } from './ui/dropdown-menu';
 import { Button } from './ui/button';
 import { ScrollArea } from './ui/scroll-area';
-import {
-	Collapsible,
-	CollapsibleContent,
-	CollapsibleTrigger,
-} from './ui/collapsible';
 import { signOut } from './utils/auth';
 import { FileTree } from './file-tree';
 
@@ -74,17 +59,7 @@ function RepositoryItem({
 }
 
 export function Sidebar() {
-	const [openRepos, setOpenRepos] = useState<string[]>([]);
-
-	const toggleRepo = (name: string) => {
-		setOpenRepos((prev) =>
-			prev.includes(name)
-				? prev.filter((repo) => repo !== name)
-				: [...prev, name],
-		);
-	};
 	const { data: repos } = useRepositories();
-	const { data: user } = useAuthedUser();
 
 	return (
 		<div className="w-64 border-r bg-muted/50 flex flex-col">
