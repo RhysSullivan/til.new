@@ -11,8 +11,11 @@ import {
 	MarkdownExtension,
 } from 'novel/extensions';
 import { UploadImagesPlugin } from 'novel/plugins';
-
 import { cx } from 'class-variance-authority';
+import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
+import { createLowlight, all } from 'lowlight';
+
+const lowlight = createLowlight(all);
 
 const aiHighlight = AIHighlight;
 const placeholder = Placeholder.configure({
@@ -86,13 +89,7 @@ const starterKit = StarterKit.configure({
 			class: cx('border-l-4 border-primary'),
 		},
 	},
-	codeBlock: {
-		HTMLAttributes: {
-			class: cx(
-				'rounded-md bg-muted text-muted-foreground border p-5 font-mono font-medium',
-			),
-		},
-	},
+	codeBlock: false,
 	code: {
 		HTMLAttributes: {
 			class: cx('rounded-md bg-muted  px-1.5 py-1 font-mono font-medium'),
@@ -105,6 +102,16 @@ const starterKit = StarterKit.configure({
 		width: 4,
 	},
 	gapcursor: false,
+});
+
+const codeBlockLowlight = CodeBlockLowlight.configure({
+	lowlight,
+	HTMLAttributes: {
+		class: cx(
+			'rounded-md bg-muted text-muted-foreground border p-5 font-mono font-medium',
+			'overflow-x-auto',
+		),
+	},
 });
 
 const markdownExtension = MarkdownExtension.configure({
@@ -129,4 +136,5 @@ export const defaultExtensions = [
 	horizontalRule,
 	aiHighlight,
 	markdownExtension,
+	codeBlockLowlight,
 ];

@@ -137,7 +137,7 @@ function EditorInternal({ initialValue, onChange }: EditorProp) {
 				tippyOptions={{
 					placement: 'top',
 				}}
-				className="flex w-fit max-w-[90vw] overflow-hidden rounded-md border border-muted bg-background shadow-xl"
+				className="flex w-fit max-w-[90vw] overflow-hidden rounded-md border border-muted bg-background shadow-xl text-primary"
 			>
 				<Separator orientation="vertical" />
 				<NodeSelector open={openNode} onOpenChange={setOpenNode} />

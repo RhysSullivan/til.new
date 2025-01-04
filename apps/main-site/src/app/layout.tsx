@@ -12,7 +12,7 @@ export default function RootLayout(props: {
 		<Layout>
 			<div className="flex h-screen bg-background">
 				<Sidebar />
-				<div className="flex-1 flex flex-col overflow-hidden">
+				<div className="flex-1 flex flex-col overflow-hidden text-primary">
 					<Header />
 					<main className="flex min-h-screen flex-col items-center pt-0 p-24">
 						{props.children}
