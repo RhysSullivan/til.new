@@ -101,14 +101,19 @@ const FileTreeNode: React.FC<FileTreeNodeProps> = ({
 		node.name.length > 30 ? node.name.slice(0, 30) + '...' : node.name;
 
 	return (
-		<div style={{ marginLeft: `${level * 4}px` }}>
+		<div className="w-full">
 			{hasChildren ? (
-				<Collapsible open={isOpen} onOpenChange={handleOpenChange}>
+				<Collapsible
+					open={isOpen}
+					onOpenChange={handleOpenChange}
+					className="w-full"
+				>
 					<CollapsibleTrigger
 						className={cn(
-							'flex items-center gap-2 w-full rounded-sm px-2 py-1 text-sm text-foreground/70 hover:bg-accent hover:text-accent-foreground text-left',
+							'flex items-center w-full rounded-sm py-1 text-sm text-foreground/70 hover:bg-accent hover:text-accent-foreground text-left',
 							isSelected && 'bg-accent text-accent-foreground',
 						)}
+						style={{ paddingLeft: `${level * 12}px` }}
 						onClick={() => onSelect(path)}
 					>
 						{isOpen ? (
@@ -118,9 +123,9 @@ const FileTreeNode: React.FC<FileTreeNodeProps> = ({
 						)}
 						<Folder
 							size={16}
-							className="shrink-0 text-blue-500 dark:text-blue-400"
+							className="shrink-0 text-blue-500 dark:text-blue-400 ml-2"
 						/>
-						<span className="truncate flex-1" title={node.name}>
+						<span className="truncate ml-2" title={node.name}>
 							{displayName}
 						</span>
 					</CollapsibleTrigger>
@@ -142,13 +147,14 @@ const FileTreeNode: React.FC<FileTreeNodeProps> = ({
 				<Link
 					href={`/${encodeURIComponent(repoName)}/${encodeURIComponent(path)}`}
 					className={cn(
-						'flex items-center gap-2 w-full rounded-sm px-2 py-1 text-sm text-foreground/70 hover:bg-accent hover:text-accent-foreground text-left',
+						'flex items-center w-full rounded-sm py-1 text-sm text-foreground/70 hover:bg-accent hover:text-accent-foreground text-left',
 						isSelected && 'bg-accent text-accent-foreground',
 					)}
+					style={{ paddingLeft: `${level * 12 + 24}px` }}
 					title={node.name}
 				>
 					<File size={16} className="shrink-0 text-foreground/50" />
-					<span className="truncate flex-1">{displayName}</span>
+					<span className="truncate ml-2">{displayName}</span>
 				</Link>
 			)}
 		</div>
