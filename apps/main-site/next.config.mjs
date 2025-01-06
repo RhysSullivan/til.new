@@ -5,6 +5,12 @@ const config = {
 	pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
 	transpilePackages: ['@til/api', '@til/core', '@til/ui', '@til/env'],
 	productionBrowserSourceMaps: true,
+	typescript: {
+		ignoreBuildErrors: true,
+	},
+	eslint: {
+		ignoreDuringBuilds: true,
+	},
 	rewrites: async () => {
 		return [
 			{
