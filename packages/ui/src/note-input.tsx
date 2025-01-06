@@ -15,6 +15,7 @@ import {
 } from './ui/select';
 import type { Repository } from '@octokit/webhooks-types';
 import { Loader2 } from 'lucide-react';
+import { FolderSelector } from './folder-select';
 
 const SELECTED_REPO_KEY = 'selected-repo';
 
@@ -44,7 +45,7 @@ export function NoteInput({ initialContent }: NoteInputProps) {
 		return body;
 	});
 
-	const [selectedRepo, setSelectedRepo] = useState<string | undefined>(
+	const [selectedRepoName, setSelectedRepoName] = useState<string | undefined>(
 		undefined,
 	);
 	const [isSaving, setIsSaving] = useState(false);
@@ -53,7 +54,7 @@ export function NoteInput({ initialContent }: NoteInputProps) {
 
 	// Save selected repo to localStorage when it changes
 	const handleRepoChange = (repoName: string) => {
-		setSelectedRepo(repoName);
+		setSelectedRepoName(repoName);
 		localStorage.setItem(SELECTED_REPO_KEY, repoName);
 	};
 
@@ -82,7 +83,7 @@ export function NoteInput({ initialContent }: NoteInputProps) {
 	};
 
 	const handleSave = async () => {
-		if (!markdown || !metadata.title || !selectedRepo || isSaving) return;
+		if (!markdown || !metadata.title || !selectedRepoName || isSaving) return;
 
 		setIsSaving(true);
 		try {
@@ -91,7 +92,7 @@ export function NoteInput({ initialContent }: NoteInputProps) {
 			await save({
 				title: metadata.title,
 				value: fullContent,
-				repo: selectedRepo,
+				repo: selectedRepoName,
 			});
 			// Clear the form after successful save
 			setMetadata({});
@@ -105,6 +106,15 @@ export function NoteInput({ initialContent }: NoteInputProps) {
 		setMetadata((prev) => ({ ...prev, title: e.target.value }));
 	};
 
+	const selectedRepo =
+		repositories.data?.find((repo) => repo.name === selectedRepoName) ??
+		repositories.data?.[0];
+	const paths =
+		selectedRepo?.files
+			.filter((file) => file.type === 'tree')
+			.map((file) => file.path)
+			.filter(Boolean) ?? [];
+	console.log('paths', paths);
 	return (
 		<div className="flex flex-col p-6 rounded-xl max-w-xl w-full gap-4">
 			<Input
@@ -117,7 +127,7 @@ export function NoteInput({ initialContent }: NoteInputProps) {
 			{isAuthenticated ? (
 				<div className="flex flex-col gap-4">
 					<Select
-						value={selectedRepo ?? repositories.data?.at(0)?.name}
+						value={selectedRepoName}
 						onValueChange={handleRepoChange}
 						disabled={repositories.isLoading}
 					>
@@ -139,8 +149,17 @@ export function NoteInput({ initialContent }: NoteInputProps) {
 							))}
 						</SelectContent>
 					</Select>
+					<FolderSelector
+						key={selectedRepoName}
+						availablePaths={paths}
+						onSelect={(path) => {
+							console.log(path);
+						}}
+					/>
 					<Button
-						disabled={!markdown || !metadata.title || !selectedRepo || isSaving}
+						disabled={
+							!markdown || !metadata.title || !selectedRepoName || isSaving
+						}
 						variant="outline"
 						onClick={handleSave}
 					>

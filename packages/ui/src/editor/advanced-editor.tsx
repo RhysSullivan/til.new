@@ -75,7 +75,7 @@ function EditorInternal({ initialValue, onChange }: EditorProp) {
 	const { editorRef } = useEditorContext();
 	return (
 		<EditorContent
-			className="h-full min-h-[500px] prose max-h-[80vh] overflow-y-auto"
+			className="h-full min-h-[500px] prose max-h-[70vh] overflow-y-auto"
 			extensions={extensions}
 			key="editor-content"
 			initialContent={initialValue as unknown as JSONContent}
