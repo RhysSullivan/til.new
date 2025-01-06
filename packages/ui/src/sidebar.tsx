@@ -78,7 +78,10 @@ export function Sidebar() {
 						asChild
 					>
 						<a
-							href="https://github.com/apps/til-new-dev/installations/new"
+							href={
+								process.env.NEXT_PUBLIC_GITHUB_APP_INSTALL_URL ??
+								'https://github.com/apps/til-new/installations/new'
+							}
 							target="_blank"
 						>
 							<Plus className="mr-2 h-4 w-4" />
