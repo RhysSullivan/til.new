@@ -101,7 +101,7 @@ const FileTreeNode: React.FC<FileTreeNodeProps> = ({
 		node.name.length > 30 ? node.name.slice(0, 30) + '...' : node.name;
 
 	return (
-		<div className="w-max">
+		<div className="w-full">
 			{hasChildren ? (
 				<Collapsible
 					open={isOpen}
