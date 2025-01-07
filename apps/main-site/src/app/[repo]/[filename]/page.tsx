@@ -1,3 +1,4 @@
+import { appRouter, createCaller } from '@til/api/index';
 import { getFile } from '@til/core/github';
 import { NoteInput } from '@til/ui/note-input';
 
@@ -7,8 +8,10 @@ export default async function Page(props: {
 	const { repo: encodedRepo, filename: encodedFilename } = await props.params;
 	const repo = decodeURIComponent(encodedRepo);
 	const filename = decodeURIComponent(encodedFilename);
+	const caller = createCaller(appRouter);
+	const session = await caller({}).auth.getSession();
 	const file = await getFile({
-		username: 'rhyssullivan',
+		username: session.login,
 		repo,
 		file: filename,
 	});

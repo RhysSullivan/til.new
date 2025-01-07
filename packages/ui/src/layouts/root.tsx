@@ -4,25 +4,19 @@ import React from 'react';
 import { Providers } from './providers';
 
 export const metadata: Metadata = {
-	title: 'Answer Overflow - Discord Content Discovery',
-	metadataBase: new URL('https://www.til.com/'),
+	title: 'til.new - Quick Developer Notes',
+	metadataBase: new URL('https://www.til.new/'),
 	description:
-		'Build the best Discord support server with Answer Overflow. Index your content into Google, answer questions with AI, and gain insights into your community.',
-	robots: {
-		// eslint-disable-next-line n/no-process-env
-		index: process.env.NEXT_PUBLIC_DEPLOYMENT_ENV === 'production',
-		// eslint-disable-next-line n/no-process-env
-		follow: process.env.NEXT_PUBLIC_DEPLOYMENT_ENV === 'production',
-	},
+		'Create and share quick developer notes and TILs (Today I Learned) directly from your browser. Instantly save to GitHub with markdown support.',
 	openGraph: {
 		type: 'website',
-		title: 'Answer Overflow - Discord Content Discovery',
-		siteName: 'Answer Overflow',
+		title: 'til.new - Quick Developer Notes',
+		siteName: 'til.new',
 		description:
-			'Build the best Discord support server with Answer Overflow. Index your content into Google, answer questions with AI, and gain insights into your community.',
+			'Create and share quick developer notes and TILs (Today I Learned) directly from your browser. Instantly save to GitHub with markdown support.',
 		images: [
 			{
-				url: 'https://www.til.com/answer-overflow-banner-v3.png',
+				url: 'https://www.til.new/banner.png',
 				width: 1200,
 				height: 630,
 			},

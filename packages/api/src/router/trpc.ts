@@ -7,7 +7,7 @@ import { getAccount } from '@til/core/queries';
 
 export interface Meta {}
 
-const t = initTRPC
+export const t = initTRPC
 	.context<Context>()
 	.meta<Meta>()
 	.create({
@@ -21,6 +21,7 @@ const t = initTRPC
 	});
 
 export const router = t.router;
+export const createCaller = t.createCallerFactory;
 const procedureBase = t.procedure;
 
 const authenticatedProcedure = procedureBase.use(async ({ ctx, next }) => {
