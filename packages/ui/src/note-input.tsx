@@ -1,21 +1,12 @@
 'use client';
 import Editor from './editor/advanced-editor';
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import { save, useIsAuthenticated, useRepositories } from './hooks/data';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { signIn } from './utils/auth';
 import frontMatter from 'front-matter';
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from './ui/select';
-import type { Repository } from '@octokit/webhooks-types';
-import { Loader2 } from 'lucide-react';
-import { FolderSelector } from './folder-select';
+import { PathSelector } from './path-selector';
 
 const SELECTED_REPO_KEY = 'selected-repo';
 
@@ -126,36 +117,7 @@ export function NoteInput({ initialContent }: NoteInputProps) {
 			{editor}
 			{isAuthenticated ? (
 				<div className="flex flex-col gap-4">
-					<Select
-						value={selectedRepoName}
-						onValueChange={handleRepoChange}
-						disabled={repositories.isLoading}
-					>
-						<SelectTrigger>
-							{repositories.isLoading ? (
-								<div className="flex items-center gap-2">
-									<Loader2 className="h-4 w-4 animate-spin" />
-									<span>Loading repositories...</span>
-								</div>
-							) : (
-								<SelectValue placeholder="Select a repository" />
-							)}
-						</SelectTrigger>
-						<SelectContent>
-							{repositories.data?.map((repo) => (
-								<SelectItem key={repo.id} value={repo.name}>
-									{repo.name}
-								</SelectItem>
-							))}
-						</SelectContent>
-					</Select>
-					<FolderSelector
-						key={selectedRepoName}
-						availablePaths={paths}
-						onSelect={(path) => {
-							console.log(path);
-						}}
-					/>
+					<PathSelector repositories={repositories.data ?? []} />
 					<Button
 						disabled={
 							!markdown || !metadata.title || !selectedRepoName || isSaving

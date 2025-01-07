@@ -6,3 +6,5 @@ import { inferRouterOutputs } from '@trpc/server';
 import { AppRouter } from './router';
 export type RouterOutputs = inferRouterOutputs<AppRouter>;
 export { createCaller } from './router/trpc';
+export type Repository =
+	inferRouterOutputs<AppRouter>['github']['listReposForUser'][number];
