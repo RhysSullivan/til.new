@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Github, ChevronDown } from 'lucide-react';
+import { Github, ChevronDown, PlusIcon } from 'lucide-react';
 import { Button } from './ui/button';
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
@@ -74,15 +74,15 @@ export function GitHubInstallButton() {
 		<>
 			<DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
 				<DropdownMenuTrigger asChild>
-					<Button variant="ghost" className="w-full justify-start">
-						<Github className="mr-2 h-4 w-4" />+{' '}
+					<Button variant="ghost" className="w-full justify-start pl-1">
+						<PlusIcon className="mr-2 h-4 w-4" />
 						{!repos.data?.length ? 'Install GitHub app' : 'Add repository'}
 						<ChevronDown className="ml-2 h-4 w-4" />
 					</Button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent className="w-56">
 					<DropdownMenuItem onClick={handleTemplateRepo}>
-						I need to copy a template
+						I need to copy a template (recommended)
 					</DropdownMenuItem>
 					<DropdownMenuItem asChild>
 						<a href={GITHUB_APP_INSTALL_URL} target="_blank">

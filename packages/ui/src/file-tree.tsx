@@ -101,7 +101,7 @@ const FileTreeNode: React.FC<FileTreeNodeProps> = ({
 		node.name.length > 30 ? node.name.slice(0, 30) + '...' : node.name;
 
 	return (
-		<div className="w-full">
+		<div className="w-max">
 			{hasChildren ? (
 				<Collapsible
 					open={isOpen}
@@ -210,22 +210,19 @@ export function FileTree({ paths, repoName }: FileTreeProps) {
 					<div className="truncate pl-[1px]">{repoName}</div>
 				</CollapsibleTrigger>
 				<CollapsibleContent>
-					<ScrollArea className="max-w-[300px] max-h-[500px] h-full w-full">
-						<div className="p-2 pl-6">
-							{Object.entries(tree.children).map(([key, child]) => (
-								<FileTreeNode
-									key={key}
-									node={child}
-									level={0}
-									selectedPath={selectedPath}
-									onSelect={setSelectedPath}
-									path={child.name}
-									repoName={repoName}
-								/>
-							))}
-						</div>
-						<ScrollBar orientation="horizontal" />
-					</ScrollArea>
+					<div className="p-2 pl-6 max-w-[300px] max-h-[500px] overflow-y-auto">
+						{Object.entries(tree.children).map(([key, child]) => (
+							<FileTreeNode
+								key={key}
+								node={child}
+								level={0}
+								selectedPath={selectedPath}
+								onSelect={setSelectedPath}
+								path={child.name}
+								repoName={repoName}
+							/>
+						))}
+					</div>
 				</CollapsibleContent>
 			</Collapsible>
 		</div>

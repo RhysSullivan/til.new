@@ -67,15 +67,13 @@ export function Sidebar() {
 			<div className="border-b max-h-12 min-h-12">
 				<UserDropdown />
 			</div>
-			<ScrollArea className="flex-1 px-2 py-4 overflow-x-auto w-64 max-w-64">
-				<div className="space-y-2">
-					{repos?.map((repo) => (
-						<RepositoryItem key={repo.name} repo={repo} />
-					))}
+			<div className="space-y-2 overflow-y-auto pt-4">
+				{repos?.map((repo) => (
+					<RepositoryItem key={repo.name} repo={repo} />
+				))}
 
-					<GitHubInstallButton />
-				</div>
-			</ScrollArea>
+				<GitHubInstallButton />
+			</div>
 		</div>
 	);
 }
