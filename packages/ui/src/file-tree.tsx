@@ -206,8 +206,8 @@ export function FileTree({ paths, repoName }: FileTreeProps) {
 			<Collapsible open={isRepoOpen} onOpenChange={handleRepoOpenChange}>
 				<CollapsibleTrigger className="flex items-center space-x-1 hover:bg-accent hover:text-accent-foreground rounded p-1 w-full text-left">
 					{isRepoOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-					<Folder size={16} className="text-blue-500 dark:text-blue-400" />
-					<span className="truncate">{repoName}</span>
+					<Folder size={16} className="text-blue-500 dark:text-blue-400 mr-2" />
+					<div className="truncate pl-[1px]">{repoName}</div>
 				</CollapsibleTrigger>
 				<CollapsibleContent>
 					<ScrollArea className="max-w-[300px] max-h-[500px] h-full w-full">

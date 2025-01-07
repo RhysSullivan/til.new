@@ -13,6 +13,7 @@ import { Button } from './ui/button';
 import { ScrollArea } from './ui/scroll-area';
 import { signOut } from './utils/auth';
 import { FileTree } from './file-tree';
+import { GitHubInstallButton } from './github-install';
 
 function UserDropdown() {
 	const { data: user } = useAuthedUser();
@@ -72,22 +73,7 @@ export function Sidebar() {
 						<RepositoryItem key={repo.name} repo={repo} />
 					))}
 
-					<Button
-						variant="ghost"
-						className="w-full justify-start text-muted-foreground"
-						asChild
-					>
-						<a
-							href={
-								process.env.NEXT_PUBLIC_GITHUB_APP_INSTALL_URL ??
-								'https://github.com/apps/til-new/installations/new'
-							}
-							target="_blank"
-						>
-							<Plus className="mr-2 h-4 w-4" />
-							Add Repository
-						</a>
-					</Button>
+					<GitHubInstallButton />
 				</div>
 			</ScrollArea>
 		</div>
