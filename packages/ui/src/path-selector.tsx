@@ -13,15 +13,21 @@ import { Repository } from '@til/api/index';
 
 export function PathSelector({
 	repositories,
+	selectedRepoName,
+	setSelectedRepoName,
+	selectedPath,
+	setSelectedPath,
 }: {
 	repositories: Repository[];
+	selectedRepoName: string;
+	setSelectedRepoName: (name: string) => void;
+	selectedPath: string;
+	setSelectedPath: (path: string) => void;
 }) {
-	const [repository, setRepository] = React.useState(
-		repositories[0]?.name ?? '',
-	);
-	const [value, setValue] = React.useState('');
 	const [searchValue, setSearchValue] = React.useState('');
-	const selectedRepo = repositories.find((repo) => repo.name === repository);
+	const selectedRepo = repositories.find(
+		(repo) => repo.name === selectedRepoName,
+	);
 	const paths =
 		selectedRepo?.files
 			.filter((file) => file.type === 'tree')
@@ -31,7 +37,7 @@ export function PathSelector({
 		<div className="flex items-center gap-1 rounded-md border bg-background p-1">
 			<div className="flex items-center">
 				<span className="px-2 text-sm text-muted-foreground">/</span>
-				<Select value={repository} onValueChange={setRepository}>
+				<Select value={selectedRepoName} onValueChange={setSelectedRepoName}>
 					<SelectTrigger className="w-[180px] border-0 bg-transparent focus:ring-0">
 						<SelectValue placeholder="Select repository" />
 					</SelectTrigger>
@@ -50,8 +56,8 @@ export function PathSelector({
 					value: path,
 					label: path,
 				}))}
-				selectedValue={value}
-				onSelectedValueChange={setValue}
+				selectedValue={selectedPath}
+				onSelectedValueChange={setSelectedPath}
 				searchValue={searchValue}
 				onSearchValueChange={setSearchValue}
 			/>

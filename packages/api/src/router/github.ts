@@ -9,15 +9,16 @@ export const githubRouter = router({
 	saveFile: authProcedure
 		.input(
 			z.object({
-				username: z.string(),
 				repo: z.string(),
 				path: z.string(),
 				content: z.string(),
 				message: z.string().optional(),
 			}),
 		)
-		.mutation(async ({ input }) => {
-			await saveFile(input);
-			return { success: true };
+		.mutation(async ({ input, ctx }) => {
+			await saveFile({
+				...input,
+				username: ctx.account.login,
+			});
 		}),
 });

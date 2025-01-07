@@ -15,9 +15,7 @@ export const t = initTRPC
 		errorFormatter({ shape }) {
 			return shape;
 		},
-		defaultMeta: {
-			tenantAuthAccessible: false,
-		},
+		defaultMeta: {},
 	});
 
 export const router = t.router;

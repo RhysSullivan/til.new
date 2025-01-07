@@ -1,12 +1,13 @@
 'use client';
 import Editor from './editor/advanced-editor';
 import { useMemo, useState } from 'react';
-import { save, useIsAuthenticated, useRepositories } from './hooks/data';
+import { useIsAuthenticated, useRepositories } from './hooks/data';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { signIn } from './utils/auth';
 import frontMatter from 'front-matter';
 import { PathSelector } from './path-selector';
+import { trpc } from './utils/client';
 
 const SELECTED_REPO_KEY = 'selected-repo';
 
@@ -29,6 +30,8 @@ export function NoteInput({ initialContent }: NoteInputProps) {
 		const { attributes } = frontMatter<FrontMatterAttributes>(initialContent);
 		return attributes;
 	});
+	const [selectedPath, setSelectedPath] = useState<string>('');
+	const mutation = trpc.github.saveFile.useMutation();
 
 	const [markdown, setMarkdown] = useState<string>(() => {
 		if (!initialContent) return '';
@@ -36,12 +39,12 @@ export function NoteInput({ initialContent }: NoteInputProps) {
 		return body;
 	});
 
+	const repositories = useRepositories();
 	const [selectedRepoName, setSelectedRepoName] = useState<string | undefined>(
-		undefined,
+		repositories.data?.[0]?.name,
 	);
 	const [isSaving, setIsSaving] = useState(false);
 	const isAuthenticated = useIsAuthenticated();
-	const repositories = useRepositories();
 
 	// Save selected repo to localStorage when it changes
 	const handleRepoChange = (repoName: string) => {
@@ -80,10 +83,11 @@ export function NoteInput({ initialContent }: NoteInputProps) {
 		try {
 			const frontmatterStr = createFrontmatterString(metadata);
 			const fullContent = `${frontmatterStr}\n${markdown}`;
-			await save({
-				title: metadata.title,
-				value: fullContent,
+			await mutation.mutateAsync({
 				repo: selectedRepoName,
+				path: `${selectedPath}/${metadata.title.toLowerCase().replace(/\s+/g, '-')}.md`,
+				content: fullContent,
+				message: `Add note: ${metadata.title}`,
 			});
 			// Clear the form after successful save
 			setMetadata({});
@@ -117,7 +121,13 @@ export function NoteInput({ initialContent }: NoteInputProps) {
 			{editor}
 			{isAuthenticated ? (
 				<div className="flex flex-col gap-4">
-					<PathSelector repositories={repositories.data ?? []} />
+					<PathSelector
+						repositories={repositories.data ?? []}
+						selectedRepoName={selectedRepoName ?? ''}
+						setSelectedRepoName={setSelectedRepoName}
+						selectedPath={selectedPath}
+						setSelectedPath={setSelectedPath}
+					/>
 					<Button
 						disabled={
 							!markdown || !metadata.title || !selectedRepoName || isSaving
