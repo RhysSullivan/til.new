@@ -101,9 +101,10 @@ export const sharedEnvs = createEnv({
 		// auth
 		GITHUB_CLIENT_ID: zStringRequiredInProduction,
 		GITHUB_CLIENT_SECRET: zStringRequiredInProduction,
+		GITHUB_APP_ID: zNumberRequiredInProduction,
 		// prefix with `-----BEGIN RSA PRIVATE KEY-----` and `-----END RSA PRIVATE KEY-----`
 		GITHUB_PRIVATE_KEY: z.string().transform((s) => {
-			return `-----BEGIN RSA PRIVATE KEY-----\n${Buffer.from(s).toString('base64')}\n-----END RSA PRIVATE KEY-----`;
+			return `-----BEGIN RSA PRIVATE KEY-----\n${s}\n-----END RSA PRIVATE KEY-----`;
 		}),
 		// redis
 		REDIS_URL: zStringRequiredInProduction,

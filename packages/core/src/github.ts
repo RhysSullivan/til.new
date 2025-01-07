@@ -7,7 +7,7 @@ export async function getInstallation(username: string) {
 	const octokit = new Octokit({
 		authStrategy: createAppAuth,
 		auth: {
-			appId: 1074737,
+			appId: sharedEnvs.GITHUB_APP_ID,
 			privateKey: sharedEnvs.GITHUB_PRIVATE_KEY,
 			type: 'app',
 		},
@@ -27,7 +27,7 @@ export async function listReposForUser(username: string) {
 	const installationOctokit = new Octokit({
 		authStrategy: createAppAuth,
 		auth: {
-			appId: 1074737,
+			appId: sharedEnvs.GITHUB_APP_ID,
 			privateKey: sharedEnvs.GITHUB_PRIVATE_KEY,
 			installationId: installation.id,
 		},
@@ -48,7 +48,7 @@ export async function listReposWithFiles(username: string) {
 	const octokit = new Octokit({
 		authStrategy: createAppAuth,
 		auth: {
-			appId: 1074737,
+			appId: sharedEnvs.GITHUB_APP_ID,
 			privateKey: sharedEnvs.GITHUB_PRIVATE_KEY,
 			type: 'app',
 		},
@@ -63,7 +63,7 @@ export async function listReposWithFiles(username: string) {
 	const installationOctokit = new Octokit({
 		authStrategy: createAppAuth,
 		auth: {
-			appId: 1074737,
+			appId: sharedEnvs.GITHUB_APP_ID,
 			privateKey: sharedEnvs.GITHUB_PRIVATE_KEY,
 			installationId: installationResponse.data.id,
 		},
@@ -124,7 +124,7 @@ export async function getFile(input: {
 	const octokit = new Octokit({
 		authStrategy: createAppAuth,
 		auth: {
-			appId: 1074737,
+			appId: sharedEnvs.GITHUB_APP_ID,
 			privateKey: sharedEnvs.GITHUB_PRIVATE_KEY,
 			installationId: installation.id,
 			type: 'app',
@@ -153,7 +153,7 @@ export async function saveFile(input: {
 	const octokit = new Octokit({
 		authStrategy: createAppAuth,
 		auth: {
-			appId: 1074737,
+			appId: sharedEnvs.GITHUB_APP_ID,
 			privateKey: sharedEnvs.GITHUB_PRIVATE_KEY,
 			installationId: installation.id,
 			type: 'app',
