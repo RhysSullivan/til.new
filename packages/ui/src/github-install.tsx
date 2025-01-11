@@ -29,7 +29,7 @@ function TemplateSteps() {
 				</p>
 				<Button asChild disabled={currentStep !== 1}>
 					<a
-						href="https://github.com/new?template_name=til-template&template_owner=RhysSullivan&name=til.new&description=Quick+notes+captured+on+til.new"
+						href="https://github.com/new?template_name=til-template&template_owner=RhysSullivan&name=til&description=Quick+notes+captured+on+til.new"
 						onClick={() => setCurrentStep(2)}
 						target="_blank"
 					>

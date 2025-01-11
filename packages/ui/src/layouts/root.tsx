@@ -14,13 +14,6 @@ export const metadata: Metadata = {
 		siteName: 'til.new',
 		description:
 			'Create and share quick developer notes and TILs (Today I Learned) directly from your browser. Instantly save to GitHub with markdown support.',
-		images: [
-			{
-				url: 'https://www.til.new/banner.png',
-				width: 1200,
-				height: 630,
-			},
-		],
 	},
 };
 const montserrat = Montserrat({
